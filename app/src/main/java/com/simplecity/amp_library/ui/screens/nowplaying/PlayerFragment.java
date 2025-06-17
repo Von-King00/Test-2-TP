@@ -208,49 +208,11 @@ public class PlayerFragment extends BaseFragment implements
 
         unbinder = ButterKnife.bind(this, view);
 
-        toolbar.setNavigationOnClickListener(v -> getActivity().onBackPressed());
-        toolbar.inflateMenu(R.menu.menu_now_playing);
+        setupToolbar();
 
-        if (CastManager.isCastAvailable(getContext(), settingsManager)) {
-            MenuItem menuItem = CastButtonFactory.setUpMediaRouteButton(getContext(), toolbar.getMenu(), R.id.media_route_menu_item);
-            menuItem.setVisible(true);
-        }
+        setupButtons();
 
-        MenuItem favoriteMenuItem = toolbar.getMenu().findItem(R.id.favorite);
-        FavoriteActionBarView menuActionView = (FavoriteActionBarView) favoriteMenuItem.getActionView();
-        menuActionView.setOnClickListener(v -> onMenuItemClick(favoriteMenuItem));
-        toolbar.setOnMenuItemClickListener(this);
-
-        if (playPauseView != null) {
-            playPauseView.setOnClickListener(v -> playPauseView.toggle(() -> {
-                presenter.togglePlayback();
-                return Unit.INSTANCE;
-            }));
-        }
-
-        if (repeatButton != null) {
-            repeatButton.setOnClickListener(v -> presenter.toggleRepeat());
-            repeatButton.setTag(":aesthetic_ignore");
-        }
-
-        if (shuffleButton != null) {
-            shuffleButton.setOnClickListener(v -> presenter.toggleShuffle());
-            shuffleButton.setTag(":aesthetic_ignore");
-        }
-
-        if (nextButton != null) {
-            nextButton.setOnClickListener(v -> presenter.skip());
-            nextButton.setRepeatListener((v, duration, repeatCount) -> presenter.scanForward(repeatCount, duration));
-        }
-
-        if (prevButton != null) {
-            prevButton.setOnClickListener(v -> presenter.prev(false));
-            prevButton.setRepeatListener((v, duration, repeatCount) -> presenter.scanBackward(repeatCount, duration));
-        }
-
-        if (seekBar != null) {
-            seekBar.setMax(1000);
-        }
+        setupSeekBar();
 
         if (savedInstanceState == null) {
             getChildFragmentManager().beginTransaction()
@@ -302,35 +264,6 @@ public class PlayerFragment extends BaseFragment implements
                     error -> {
                         // Nothing to do
                     })
-            );
-        }
-
-        if (seekBar != null) {
-            Flowable<SeekBarChangeEvent> sharedSeekBarEvents = RxSeekBar.changeEvents(seekBar)
-                    .toFlowable(BackpressureStrategy.LATEST)
-                    .ofType(SeekBarChangeEvent.class)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .share();
-
-            disposables.add(sharedSeekBarEvents.subscribe(
-                    seekBarChangeEvent -> {
-                        if (seekBarChangeEvent instanceof SeekBarStartChangeEvent) {
-                            isSeeking = true;
-                        } else if (seekBarChangeEvent instanceof SeekBarStopChangeEvent) {
-                            isSeeking = false;
-                        }
-                    },
-                    error -> LogUtils.logException(TAG, "Error in seek change event", error))
-            );
-
-            disposables.add(sharedSeekBarEvents
-                    .ofType(SeekBarProgressChangeEvent.class)
-                    .filter(SeekBarProgressChangeEvent::fromUser)
-                    .debounce(15, TimeUnit.MILLISECONDS)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                            seekBarChangeEvent -> presenter.seekTo(seekBarChangeEvent.progress()),
-                            error -> LogUtils.logException(TAG, "Error receiving seekbar progress", error))
             );
         }
 
@@ -752,5 +685,78 @@ public class PlayerFragment extends BaseFragment implements
     @Override
     public void showRingtoneSetMessage() {
         Toast.makeText(getContext(), R.string.ringtone_set_new, Toast.LENGTH_SHORT).show();
+    }
+
+    private void setupButtons() {
+        if (playPauseView != null) {
+            playPauseView.setOnClickListener(v -> playPauseView.toggle(() -> {
+                presenter.togglePlayback();
+                return Unit.INSTANCE;
+            }));
+        }
+
+        if (repeatButton != null) {
+            repeatButton.setOnClickListener(v -> presenter.toggleRepeat());
+            repeatButton.setTag(":aesthetic_ignore");
+        }
+
+        if (shuffleButton != null) {
+            shuffleButton.setOnClickListener(v -> presenter.toggleShuffle());
+            shuffleButton.setTag(":aesthetic_ignore");
+        }
+
+        if (nextButton != null) {
+            nextButton.setOnClickListener(v -> presenter.skip());
+            nextButton.setRepeatListener((v, duration, repeatCount) -> presenter.scanForward(repeatCount, duration));
+        }
+
+        if (prevButton != null) {
+            prevButton.setOnClickListener(v -> presenter.prev(false));
+            prevButton.setRepeatListener((v, duration, repeatCount) -> presenter.scanBackward(repeatCount, duration));
+        }
+    }
+
+    private void setupToolbar() {
+        toolbar.setNavigationOnClickListener(v -> getActivity().onBackPressed());
+        toolbar.inflateMenu(R.menu.menu_now_playing);
+
+        if (CastManager.isCastAvailable(getContext(), settingsManager)) {
+            MenuItem menuItem = CastButtonFactory.setUpMediaRouteButton(getContext(), toolbar.getMenu(), R.id.media_route_menu_item);
+            menuItem.setVisible(true);
+        }
+
+        MenuItem favoriteMenuItem = toolbar.getMenu().findItem(R.id.favorite);
+        FavoriteActionBarView menuActionView = (FavoriteActionBarView) favoriteMenuItem.getActionView();
+        menuActionView.setOnClickListener(v -> onMenuItemClick(favoriteMenuItem));
+        toolbar.setOnMenuItemClickListener(this);
+    }
+
+    private void setupSeekBar() {
+        if (seekBar != null) {
+            seekBar.setMax(1000);
+
+            disposables.add(RxSeekBar.userChanges(seekBar)
+                    .debounce(100, TimeUnit.MILLISECONDS)
+                    .filter(change -> change instanceof SeekBarStopChangeEvent)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(change -> {
+                        isSeeking = false;
+                        presenter.seekTo(change.progress());
+                    }, onErrorLogAndRethrow()));
+
+            disposables.add(RxSeekBar.changeEvents(seekBar)
+                    .filter(change -> change instanceof SeekBarStartChangeEvent)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(change -> isSeeking = true, onErrorLogAndRethrow()));
+
+            disposables.add(RxSeekBar.changeEvents(seekBar)
+                    .filter(change -> change instanceof SeekBarProgressChangeEvent)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(change -> {
+                        if (isSeeking) {
+                            currentTime.setText(StringUtils.get(change.progress()));
+                        }
+                    }, onErrorLogAndRethrow()));
+        }
     }
 }

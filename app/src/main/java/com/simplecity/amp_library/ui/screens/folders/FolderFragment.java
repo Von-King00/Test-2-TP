@@ -203,24 +203,9 @@ public class FolderFragment extends BaseFragment implements
         unbinder = ButterKnife.bind(this, rootView);
 
         if (displayedInTabs) {
-            breadcrumbsView = new BreadcrumbsView(currentDir);
-            showBreadcrumbsInList = true;
-            changeBreadcrumbPath();
-            appBarLayout.setVisibility(View.GONE);
-            statusBarView.setVisibility(View.GONE);
+            setupTabbedUI();
         } else {
-            showBreadcrumbsInList = false;
-            breadcrumb.addBreadcrumbListener(this);
-            if (!TextUtils.isEmpty(currentDir)) {
-                breadcrumb.changeBreadcrumbPath(currentDir);
-            }
-        }
-
-        if (!displayedInTabs) {
-            toolbar.inflateMenu(R.menu.menu_folders);
-            toolbar.setNavigationOnClickListener(v -> getNavigationController().popViewController());
-            toolbar.setOnMenuItemClickListener(this);
-            updateMenuItems(toolbar.getMenu());
+            setupStandardUI();
         }
 
         recyclerView.setRecyclerListener(new RecyclerListener());
@@ -235,23 +220,43 @@ public class FolderFragment extends BaseFragment implements
         return rootView;
     }
 
+    private void setupTabbedUI() {
+        breadcrumbsView = new BreadcrumbsView(currentDir);
+        showBreadcrumbsInList = true;
+        changeBreadcrumbPath();
+        appBarLayout.setVisibility(View.GONE);
+        statusBarView.setVisibility(View.GONE);
+    }
+
+    private void setupStandardUI() {
+        showBreadcrumbsInList = false;
+        breadcrumb.addBreadcrumbListener(this);
+        if (!TextUtils.isEmpty(currentDir)) {
+            breadcrumb.changeBreadcrumbPath(currentDir);
+        }
+        toolbar.inflateMenu(R.menu.menu_folders);
+        toolbar.setNavigationOnClickListener(v -> getNavigationController().popViewController());
+        toolbar.setOnMenuItemClickListener(this);
+        updateMenuItems(toolbar.getMenu());
+    }
+
     @Override
     public void onResume() {
         super.onResume();
 
         if (currentDir == null) {
-            disposables.add(Observable.fromCallable(() -> {
-                        if (!TextUtils.isEmpty(currentDir)) {
-                            return new File(currentDir);
-                        } else {
-                            return fileBrowser.getInitialDir();
+            disposables.add(loadInitialDirectory()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(file -> {
+                        currentDir = file.getAbsolutePath();
+                        if (!displayedInTabs) {
+                            breadcrumb.changeBreadcrumbPath(currentDir);
                         }
-                    }).subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(
-                                    this::changeDir,
-                                    error -> LogUtils.logException(TAG, "Error in onResume", error))
-            );
+                        refresh();
+                    }, onErrorLogAndRethrow()));
+        } else {
+            refresh();
         }
 
         getNavigationController().addBackPressListener(this);
@@ -263,6 +268,16 @@ public class FolderFragment extends BaseFragment implements
         if (isVisible()) {
             setupContextualToolbar();
         }
+    }
+
+    private Observable<File> loadInitialDirectory() {
+        return Observable.fromCallable(() -> {
+            if (!TextUtils.isEmpty(currentDir)) {
+                return new File(currentDir);
+            } else {
+                return fileBrowser.getInitialDir();
+            }
+        });
     }
 
     @Override

@@ -358,123 +358,41 @@ public class MusicService extends MediaBrowserServiceCompat {
             if (action != null) {
                 switch (action) {
                     case ServiceCommand.NEXT:
-                        dummyNotificationHelper.showDummyNotification(this);
-
-                        // If the service is not already started:
-                        // - With queue: Force to next song, start playback, update notification, no ANR
-                        // - No queue: ANR
-
-                        // Possible solution: (A) Show the Shuttle notification, despite the fact that music isn't playing. Need to customise notification to allow for an empty queue (no current song)
-                        // We could try to generate a queue of random songs as well, but there's no guarantee the user has music on their device.
-
-                        gotoNext(true);
-
+                        handleNextCommand();
                         break;
                     case ServiceCommand.PREV:
-                        dummyNotificationHelper.showDummyNotification(this);
-
-                        // If the service is not already started:
-                        // - With queue: ANR
-                        // - No queue: ANR
-
-                        // Possible solution: (A) Show the Shuttle notification, despite the fact that music isn't playing. Need to customise notification to allow for an empty queue (no current song)
-
-                        previous(false);
-
+                        handlePrevCommand();
                         break;
                     case ServiceCommand.PAUSE:
-                        dummyNotificationHelper.showDummyNotification(this);
-
-                        // If the service is not already started:
-                        // - With queue: ANR
-                        // - No queue: ANR
-
-                        // Possible solution: (A) Show the Shuttle notification, despite the fact that music isn't playing. Need to customise notification to allow for an empty queue (no current song)
-
-                        pause(true);
+                        handlePauseCommand();
                         break;
                     case ServiceCommand.PLAY:
                     case ShortcutCommands.PLAY:
-                        dummyNotificationHelper.showDummyNotification(this);
-
-                        // If the service is not already started:
-                        // - No queue: ANR
-                        // - With queue: No ANR
-
-                        // Possible solution: (A) Show the Shuttle notification, despite the fact that music isn't playing. Need to customise notification to allow for an empty queue (no current song)
-
-                        play();
+                        handlePlayCommand();
                         break;
                     case ServiceCommand.TOGGLE_PLAYBACK:
-                        dummyNotificationHelper.showDummyNotification(this);
-
-                        if (isPlaying()) {
-
-                            // It's not possible to be playing and the service not be started. No ANR
-
-                            pause(intent.getBooleanExtra(MediaButtonCommand.FORCE_PREVIOUS, false));
-                        } else {
-
-                            // Same as ServiceCommand.PLAY
-
-                            play();
-                        }
+                        handleTogglePlaybackCommand(intent);
                         break;
                     case ServiceCommand.STOP:
-                        dummyNotificationHelper.showDummyNotification(this);
-
-                        // If the service is already started & we're not playing: ANR
-                        // If the service is not already started: ANR
-
-                        pause(false);
-                        releaseServiceUiAndStop();
-                        notificationStateHandler.removeCallbacksAndMessages(null);
-                        //For some reason, the notification will only go away if this call is delayed.
-                        new Handler().postDelayed(() -> stopForegroundImpl(true, false), 150);
+                        handleStopCommand();
                         break;
                     case ServiceCommand.SHUFFLE:
-                        dummyNotificationHelper.showDummyNotification(this);
-
-                        // If the service is not already started: ANR
-
-                        toggleShuffleMode();
+                        handleShuffleCommand();
                         break;
                     case ServiceCommand.REPEAT:
-                        dummyNotificationHelper.showDummyNotification(this);
-
-                        // If the service is not already started: ANR
-
-                        toggleRepeat();
+                        handleRepeatCommand();
                         break;
                     case ServiceCommand.TOGGLE_FAVORITE:
-                        dummyNotificationHelper.showDummyNotification(this);
-
-                        // If the service is not already started: ANR
-
-                        toggleFavorite();
+                        handleToggleFavoriteCommand();
                         break;
                     case ExternalIntents.PLAY_STATUS_REQUEST:
-                        dummyNotificationHelper.showDummyNotification(this);
-
-                        // If the service is not already started: ANR
-
-                        notifyChange(ExternalIntents.PLAY_STATUS_RESPONSE);
+                        handlePlayStatusRequestCommand();
                         break;
                     case ServiceCommand.SHUTDOWN:
-                        dummyNotificationHelper.showDummyNotification(this);
-
-                        // If the service is not already started: ANR
-
-                        shutdownScheduled = false;
-                        releaseServiceUiAndStop();
+                        handleShutdownCommand();
                         return START_NOT_STICKY;
                     case ShortcutCommands.SHUFFLE_ALL:
-                        dummyNotificationHelper.showDummyNotification(this);
-
-                        // If service is not already started: ANR
-
-                        queueManager.makeShuffleList();
-                        playAutoShuffleList();
+                        handleShuffleAllShortcutCommand();
                         break;
                 }
             }
@@ -1192,5 +1110,133 @@ public class MusicService extends MediaBrowserServiceCompat {
         public void stopForegroundImpl(boolean removeNotification, boolean withDelay) {
             MusicService.this.stopForegroundImpl(removeNotification, withDelay);
         }
+    }
+
+    private void handleNextCommand() {
+        dummyNotificationHelper.showDummyNotification(this);
+
+        // If the service is not already started:
+        // - With queue: Force to next song, start playback, update notification, no ANR
+        // - No queue: ANR
+
+        // Possible solution: (A) Show the Shuttle notification, despite the fact that music isn't playing. Need to customise notification to allow for an empty queue (no current song)
+        // We could try to generate a queue of random songs as well, but there's no guarantee the user has music on their device.
+
+        gotoNext(true);
+    }
+
+    private void handlePrevCommand() {
+        dummyNotificationHelper.showDummyNotification(this);
+
+        // If the service is not already started:
+        // - With queue: ANR
+        // - No queue: ANR
+
+        // Possible solution: (A) Show the Shuttle notification, despite the fact that music isn't playing. Need to customise notification to allow for an empty queue (no current song)
+
+        previous(false);
+    }
+
+    private void handlePauseCommand() {
+        dummyNotificationHelper.showDummyNotification(this);
+
+        // If the service is not already started:
+        // - With queue: ANR
+        // - No queue: ANR
+
+        // Possible solution: (A) Show the Shuttle notification, despite the fact that music isn't playing. Need to customise notification to allow for an empty queue (no current song)
+
+        pause(true);
+    }
+
+    private void handlePlayCommand() {
+        dummyNotificationHelper.showDummyNotification(this);
+
+        // If the service is not already started:
+        // - No queue: ANR
+        // - With queue: No ANR
+
+        // Possible solution: (A) Show the Shuttle notification, despite the fact that music isn't playing. Need to customise notification to allow for an empty queue (no current song)
+
+        play();
+    }
+
+    private void handleTogglePlaybackCommand(Intent intent) {
+        dummyNotificationHelper.showDummyNotification(this);
+
+        if (isPlaying()) {
+
+            // It's not possible to be playing and the service not be started. No ANR
+
+            pause(intent.getBooleanExtra(MediaButtonCommand.FORCE_PREVIOUS, false));
+        } else {
+
+            // Same as ServiceCommand.PLAY
+
+            play();
+        }
+    }
+
+    private void handleStopCommand() {
+        dummyNotificationHelper.showDummyNotification(this);
+
+        // If the service is already started & we're not playing: ANR
+        // If the service is not already started: ANR
+
+        pause(false);
+        releaseServiceUiAndStop();
+        notificationStateHandler.removeCallbacksAndMessages(null);
+        //For some reason, the notification will only go away if this call is delayed.
+        new Handler().postDelayed(() -> stopForegroundImpl(true, false), 150);
+    }
+
+    private void handleShuffleCommand() {
+        dummyNotificationHelper.showDummyNotification(this);
+
+        // If the service is not already started: ANR
+
+        toggleShuffleMode();
+    }
+
+    private void handleRepeatCommand() {
+        dummyNotificationHelper.showDummyNotification(this);
+
+        // If the service is not already started: ANR
+
+        toggleRepeat();
+    }
+
+    private void handleToggleFavoriteCommand() {
+        dummyNotificationHelper.showDummyNotification(this);
+
+        // If the service is not already started: ANR
+
+        toggleFavorite();
+    }
+
+    private void handlePlayStatusRequestCommand() {
+        dummyNotificationHelper.showDummyNotification(this);
+
+        // If the service is not already started: ANR
+
+        notifyChange(ExternalIntents.PLAY_STATUS_RESPONSE);
+    }
+
+    private void handleShutdownCommand() {
+        dummyNotificationHelper.showDummyNotification(this);
+
+        // If the service is not already started: ANR
+
+        shutdownScheduled = false;
+        releaseServiceUiAndStop();
+    }
+
+    private void handleShuffleAllShortcutCommand() {
+        dummyNotificationHelper.showDummyNotification(this);
+
+        // If service is not already started: ANR
+
+        queueManager.makeShuffleList();
+        playAutoShuffleList();
     }
 }

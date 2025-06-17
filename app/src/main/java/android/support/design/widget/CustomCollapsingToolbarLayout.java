@@ -421,26 +421,9 @@ public class CustomCollapsingToolbarLayout extends FrameLayout {
                 final boolean isRtl = ViewCompat.getLayoutDirection(this)
                         == ViewCompat.LAYOUT_DIRECTION_RTL;
 
-                // Update the collapsed bounds
-                final int maxOffset = getMaxOffsetForPinChild(
-                        mToolbarDirectChild != null ? mToolbarDirectChild : mToolbar);
-                ViewGroupUtils.getDescendantRect(this, mDummyView, mTmpRect);
-                mCollapsingTextHelper.setCollapsedBounds(
-                        mTmpRect.left + (isRtl
-                                ? mToolbar.getTitleMarginEnd()
-                                : mToolbar.getTitleMarginStart()),
-                        mTmpRect.top + maxOffset + mToolbar.getTitleMarginTop(),
-                        mTmpRect.right + (isRtl
-                                ? mToolbar.getTitleMarginStart()
-                                : mToolbar.getTitleMarginEnd()),
-                        mTmpRect.bottom + maxOffset - mToolbar.getTitleMarginBottom());
+                updateCollapsedBounds(isRtl);
+                updateExpandedBounds(isRtl, right, left, bottom, top);
 
-                // Update the expanded bounds
-                mCollapsingTextHelper.setExpandedBounds(
-                        isRtl ? mExpandedMarginEnd : mExpandedMarginStart,
-                        mTmpRect.top + mExpandedMarginTop,
-                        right - left - (isRtl ? mExpandedMarginStart : mExpandedMarginEnd),
-                        bottom - top - mExpandedMarginBottom);
                 // Now recalculate using the new bounds
                 mCollapsingTextHelper.recalculate();
             }
@@ -470,6 +453,29 @@ public class CustomCollapsingToolbarLayout extends FrameLayout {
         }
 
         updateScrimVisibility();
+    }
+
+    private void updateCollapsedBounds(boolean isRtl) {
+        final int maxOffset = getMaxOffsetForPinChild(
+                mToolbarDirectChild != null ? mToolbarDirectChild : mToolbar);
+        ViewGroupUtils.getDescendantRect(this, mDummyView, mTmpRect);
+        mCollapsingTextHelper.setCollapsedBounds(
+                mTmpRect.left + (isRtl
+                        ? mToolbar.getTitleMarginEnd()
+                        : mToolbar.getTitleMarginStart()),
+                mTmpRect.top + maxOffset + mToolbar.getTitleMarginTop(),
+                mTmpRect.right + (isRtl
+                        ? mToolbar.getTitleMarginStart()
+                        : mToolbar.getTitleMarginEnd()),
+                mTmpRect.bottom + maxOffset - mToolbar.getTitleMarginBottom());
+    }
+
+    private void updateExpandedBounds(boolean isRtl, int right, int left, int bottom, int top) {
+        mCollapsingTextHelper.setExpandedBounds(
+                isRtl ? mExpandedMarginEnd : mExpandedMarginStart,
+                mTmpRect.top + mExpandedMarginTop,
+                right - left - (isRtl ? mExpandedMarginStart : mExpandedMarginEnd),
+                bottom - top - mExpandedMarginBottom);
     }
 
     /**

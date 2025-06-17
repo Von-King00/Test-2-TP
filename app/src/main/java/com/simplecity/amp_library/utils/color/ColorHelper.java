@@ -59,6 +59,26 @@ public class ColorHelper {
      *          contrast ratio.
      */
     private static int findContrastColor(int color, int other, boolean findFg, double minRatio) {
+        return findColorInLABRange(color, other, findFg, minRatio, 0, lab[0]);
+    }
+
+    /**
+     * Finds a suitable color such that there's enough contrast.
+     *
+     * @param color the color to start searching from.
+     * @param other the color to ensure contrast against. Assumed to be darker than {@param color}
+     * @param findFg if true, we assume {@param color} is a foreground, otherwise a background.
+     * @param minRatio the minimum contrast ratio required.
+     * @return a color with the same hue as {@param color}, potentially darkened to meet the
+     *          contrast ratio.
+     */
+    private static int findContrastColorAgainstDark(int color, int other, boolean findFg,
+            double minRatio) {
+        return findColorInLABRange(color, other, findFg, minRatio, hsl[2], 1);
+    }
+
+    private static int findColorInLABRange(int color, int other, boolean findFg, double minRatio,
+            double low, double high) {
         int fg = findFg ? color : other;
         int bg = findFg ? other : color;
         if (ColorUtilsFromCompat.calculateContrast(fg, bg) >= minRatio) {
@@ -68,7 +88,6 @@ public class ColorHelper {
         double[] lab = new double[3];
         ColorUtilsFromCompat.colorToLAB(findFg ? fg : bg, lab);
 
-        double low = 0, high = lab[0];
         final double a = lab[1], b = lab[2];
         for (int i = 0; i < 15 && high - low > 0.00001; i++) {
             final double l = (low + high) / 2;
@@ -116,45 +135,6 @@ public class ColorHelper {
             }
         }
         return Color.argb(high, r, g, b);
-    }
-
-    /**
-     * Finds a suitable color such that there's enough contrast.
-     *
-     * @param color the color to start searching from.
-     * @param other the color to ensure contrast against. Assumed to be darker than {@param color}
-     * @param findFg if true, we assume {@param color} is a foreground, otherwise a background.
-     * @param minRatio the minimum contrast ratio required.
-     * @return a color with the same hue as {@param color}, potentially darkened to meet the
-     *          contrast ratio.
-     */
-    private static int findContrastColorAgainstDark(int color, int other, boolean findFg,
-            double minRatio) {
-        int fg = findFg ? color : other;
-        int bg = findFg ? other : color;
-        if (ColorUtilsFromCompat.calculateContrast(fg, bg) >= minRatio) {
-            return color;
-        }
-
-        float[] hsl = new float[3];
-        ColorUtilsFromCompat.colorToHSL(findFg ? fg : bg, hsl);
-
-        float low = hsl[2], high = 1;
-        for (int i = 0; i < 15 && high - low > 0.00001; i++) {
-            final float l = (low + high) / 2;
-            hsl[2] = l;
-            if (findFg) {
-                fg = ColorUtilsFromCompat.HSLToColor(hsl);
-            } else {
-                bg = ColorUtilsFromCompat.HSLToColor(hsl);
-            }
-            if (ColorUtilsFromCompat.calculateContrast(fg, bg) > minRatio) {
-                high = l;
-            } else {
-                low = l;
-            }
-        }
-        return findFg ? fg : bg;
     }
 
     /**
