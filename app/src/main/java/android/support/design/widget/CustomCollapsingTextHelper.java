@@ -142,13 +142,13 @@ public final class CustomCollapsingTextHelper {
     }
 
     public static class CustomTextHelperParams {
-        public View view;
-        public TextPaint titlePaint;
-        public TextPaint subPaint;
-        public Rect collapsedBounds;
-        public Rect expandedBounds;
-        public RectF currentBounds;
-        // Ajoute d'autres champs si nécessaire
+        private final View view;
+        private final TextPaint titlePaint;
+        private final TextPaint subPaint;
+        private final Rect collapsedBounds;
+        private final Rect expandedBounds;
+        private final RectF currentBounds;
+        // Add other fields if necessary
 
         public CustomTextHelperParams(View view) {
             this.view = view;
@@ -158,15 +158,22 @@ public final class CustomCollapsingTextHelper {
             this.expandedBounds = new Rect();
             this.currentBounds = new RectF();
         }
+
+        public View getView() { return view; }
+        public TextPaint getTitlePaint() { return titlePaint; }
+        public TextPaint getSubPaint() { return subPaint; }
+        public Rect getCollapsedBounds() { return collapsedBounds; }
+        public Rect getExpandedBounds() { return expandedBounds; }
+        public RectF getCurrentBounds() { return currentBounds; }
     }
 
     public CustomCollapsingTextHelper(CustomTextHelperParams params) {
-        mView = params.view;
-        mTitlePaint = params.titlePaint;
-        mSubPaint = params.subPaint;
-        mCollapsedBounds = params.collapsedBounds;
-        mExpandedBounds = params.expandedBounds;
-        mCurrentBounds = params.currentBounds;
+        mView = params.getView();
+        mTitlePaint = params.getTitlePaint();
+        mSubPaint = params.getSubPaint();
+        mCollapsedBounds = params.getCollapsedBounds();
+        mExpandedBounds = params.getExpandedBounds();
+        mCurrentBounds = params.getCurrentBounds();
     }
 
     /**
