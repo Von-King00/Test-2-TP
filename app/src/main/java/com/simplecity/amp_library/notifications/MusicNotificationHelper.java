@@ -45,7 +45,7 @@ public class MusicNotificationHelper extends NotificationHelper {
 
     Notification notification;
 
-    boolean isFavorite = false;
+    boolean isFavoriteState = false;
 
     Bitmap bitmap;
 
@@ -119,7 +119,7 @@ public class MusicNotificationHelper extends NotificationHelper {
             @NonNull SettingsManager settingsManager,
             FavoritesPlaylistManager favoritesPlaylistManager
     ) {
-        notification = getBuilder(context, song, mediaSessionToken, bitmap, isPlaying, isFavorite).build();
+        notification = getBuilder(context, song, mediaSessionToken, bitmap, isPlaying, isFavoriteState).build();
         notify(NOTIFICATION_ID, notification);
 
         compositeDisposable.add(favoritesPlaylistManager.isFavorite(song)
@@ -127,7 +127,7 @@ public class MusicNotificationHelper extends NotificationHelper {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(isFavorite -> {
-                    this.isFavorite = isFavorite;
+                    this.isFavoriteState = isFavorite;
                     notification = getBuilder(context, song, mediaSessionToken, MusicNotificationHelper.this.bitmap, isPlaying, isFavorite).build();
                     notify(notification);
                 }, error -> {
@@ -146,7 +146,7 @@ public class MusicNotificationHelper extends NotificationHelper {
                     public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                         MusicNotificationHelper.this.bitmap = resource;
                         try {
-                            notification = getBuilder(context, song, mediaSessionToken, bitmap, isPlaying, isFavorite).build();
+                            notification = getBuilder(context, song, mediaSessionToken, bitmap, isPlaying, isFavoriteState).build();
                             MusicNotificationHelper.this.notify(notification);
                         } catch (NullPointerException | ConcurrentModificationException e) {
                             LogUtils.logException(TAG, "Exception while attempting to update notification with glide image.", e);
@@ -158,7 +158,7 @@ public class MusicNotificationHelper extends NotificationHelper {
                         MusicNotificationHelper.this.bitmap = GlideUtils.drawableToBitmap(errorDrawable);
                         super.onLoadFailed(e, errorDrawable);
                         try {
-                            notification = getBuilder(context, song, mediaSessionToken, bitmap, isPlaying, isFavorite).build();
+                            notification = getBuilder(context, song, mediaSessionToken, bitmap, isPlaying, isFavoriteState).build();
                             MusicNotificationHelper.this.notify(NOTIFICATION_ID, notification);
                         } catch (IllegalArgumentException error) {
                             LogUtils.logException(TAG, "Exception while attempting to update notification with error image", error);

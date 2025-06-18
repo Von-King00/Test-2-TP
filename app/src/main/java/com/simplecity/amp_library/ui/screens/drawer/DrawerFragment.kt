@@ -141,7 +141,7 @@ class DrawerFragment : BaseFragment(), DrawerView, View.OnCreateContextMenuListe
     override fun onResume() {
         super.onResume()
 
-        // Todo: Move this crap to presenter
+        // FIXME: Refactor this logic into the presenter for better separation of concerns.
         disposables.add(Aesthetic.get(context)
             .colorPrimary()
             .compose(Rx.distinctToMainThread())

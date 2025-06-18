@@ -394,8 +394,7 @@ class AlbumListFragment :
     }
 
     override fun onPlaybackFailed() {
-        // Todo: Improve error message
-        Toast.makeText(context, R.string.emptyplaylist, Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, R.string.error_playback_failed, Toast.LENGTH_SHORT).show()
     }
 
     override fun presentTagEditorDialog(album: Album) {

@@ -18,7 +18,6 @@ import com.squareup.leakcanary.RefWatcher;
 import dagger.android.support.AndroidSupportInjection;
 import java.lang.reflect.Field;
 import javax.inject.Inject;
-import test.com.androidnavigation.fragment.BaseController;
 
 public abstract class BaseFragment extends BaseController {
 

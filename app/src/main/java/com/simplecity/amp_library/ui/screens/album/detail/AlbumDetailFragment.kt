@@ -493,8 +493,7 @@ class AlbumDetailFragment :
     }
 
     override fun onPlaybackFailed() {
-        // Todo: Improve error message
-        Toast.makeText(context, R.string.empty_playlist, Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, R.string.error_playback_failed, Toast.LENGTH_SHORT).show()
     }
 
     // SongMenuContract.View Implementation

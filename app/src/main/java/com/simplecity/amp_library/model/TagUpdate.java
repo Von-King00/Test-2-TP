@@ -5,10 +5,10 @@ import org.jaudiotagger.tag.Tag;
 
 public class TagUpdate {
 
-    String title;
-    String album;
-    String artist;
-    String albumArtist;
+    private String title;
+    private String album;
+    private String artist;
+    private String albumArtist;
     String genre;
     String year;
     String track;
@@ -285,5 +285,21 @@ public class TagUpdate {
             } catch (Exception ignored) {
             }
         }
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getAlbum() {
+        return album;
+    }
+
+    public String getArtist() {
+        return artist;
+    }
+
+    public String getAlbumArtist() {
+        return albumArtist;
     }
 }

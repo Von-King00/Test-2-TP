@@ -149,7 +149,7 @@ class PlaylistDetailFragment :
 
         adapter = ViewModelAdapter()
 
-        // Todo: On playlist deleted
+        // FIXME: Handle UI update and navigation when playlist is deleted.
         //Toast.makeText(getContext(), R.string.playlist_deleted_message, Toast.LENGTH_SHORT).show();
         //getNavigationController().popViewController();
     }

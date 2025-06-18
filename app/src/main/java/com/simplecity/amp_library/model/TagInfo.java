@@ -20,9 +20,9 @@ import org.jaudiotagger.tag.TagException;
  */
 public class TagInfo implements Serializable {
 
-    public String artistName;
-    public String albumArtistName;
-    public String albumName;
+    private String artistName;
+    private String albumArtistName;
+    private String albumName;
     public String trackName;
     public int trackNumber;
     public int trackTotal;
@@ -105,5 +105,17 @@ public class TagInfo implements Serializable {
         } catch (UnsupportedOperationException ignored) {
         }
         return -1;
+    }
+
+    public String getArtistName() {
+        return artistName;
+    }
+
+    public String getAlbumArtistName() {
+        return albumArtistName;
+    }
+
+    public String getAlbumName() {
+        return albumName;
     }
 }

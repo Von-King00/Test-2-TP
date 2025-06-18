@@ -31,34 +31,34 @@ class RepositoryModule {
     }
 
     @Module
-    abstract class AbsRepositoryModule {
+    interface AbsRepositoryModule {
 
         @Binds
         @Singleton
-        abstract fun bindSongsRepository(songsRepository: SongsRepository): Repository.SongsRepository
+        fun bindSongsRepository(songsRepository: SongsRepository): Repository.SongsRepository
 
         @Binds
         @Singleton
-        abstract fun bindAlbumsRepository(albumsRepository: AlbumsRepository): Repository.AlbumsRepository
+        fun bindAlbumsRepository(albumsRepository: AlbumsRepository): Repository.AlbumsRepository
 
         @Binds
         @Singleton
-        abstract fun bindAlbumArtistsRepository(albumArtistsRepository: AlbumArtistsRepository): Repository.AlbumArtistsRepository
+        fun bindAlbumArtistsRepository(albumArtistsRepository: AlbumArtistsRepository): Repository.AlbumArtistsRepository
 
         @Binds
         @Singleton
-        abstract fun bindGenresRepository(genresRepository: GenresRepository): Repository.GenresRepository
+        fun bindGenresRepository(genresRepository: GenresRepository): Repository.GenresRepository
 
         @Binds
         @Singleton
-        abstract fun bindPlaylistsRepository(playlistsRepository: PlaylistsRepository): Repository.PlaylistsRepository
+        fun bindPlaylistsRepository(playlistsRepository: PlaylistsRepository): Repository.PlaylistsRepository
 
         @Binds
         @Singleton
-        abstract fun bindBlacklistRepository(blacklistRepository: BlacklistRepository): Repository.BlacklistRepository
+        fun bindBlacklistRepository(blacklistRepository: BlacklistRepository): Repository.BlacklistRepository
 
         @Binds
         @Singleton
-        abstract fun bindWhitelistRepository(whitelistRepository: WhitelistRepository): Repository.WhitelistRepository
+        fun bindWhitelistRepository(whitelistRepository: WhitelistRepository): Repository.WhitelistRepository
     }
 }
