@@ -21,21 +21,11 @@ class HeadsetManager(
         headsetReceiver = object : BroadcastReceiver() {
 
             override fun onReceive(context: Context, intent: Intent) {
-
-                if (isInitialStickyBroadcast) {
-                    return
-                }
-
-                if (intent.hasExtra("state")) {
-                    if (intent.getIntExtra("state", 0) == 0) {
-                        if (playbackSettingsManager.pauseOnHeadsetDisconnect) {
-                            playbackManager.pause(false)
-                        }
-                    } else if (intent.getIntExtra("state", 0) == 1) {
-                        if (playbackSettingsManager.playOnHeadsetConnect) {
-                            playbackManager.play()
-                        }
-                    }
+                if (isInitialStickyBroadcast) return
+                val state = if (intent.hasExtra("state")) intent.getIntExtra("state", 0) else return
+                when (state) {
+                    0 -> if (playbackSettingsManager.pauseOnHeadsetDisconnect) playbackManager.pause(false)
+                    1 -> if (playbackSettingsManager.playOnHeadsetConnect) playbackManager.play()
                 }
             }
         }

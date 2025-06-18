@@ -11,10 +11,17 @@ public class LastFmAlbum implements LastFmResult {
     public Album album;
 
     public static class Album {
-        public String name;
+        private String name;
         @SerializedName("image")
-        public List<LastFmImage> images = new ArrayList<>();
-        public Wiki wiki;
+        private List<LastFmImage> images = new ArrayList<>();
+        private Wiki wiki;
+
+        public String getName() { return name; }
+        public void setName(String name) { this.name = name; }
+        public List<LastFmImage> getImages() { return images; }
+        public void setImages(List<LastFmImage> images) { this.images = images; }
+        public Wiki getWiki() { return wiki; }
+        public void setWiki(Wiki wiki) { this.wiki = wiki; }
     }
 
     @Override

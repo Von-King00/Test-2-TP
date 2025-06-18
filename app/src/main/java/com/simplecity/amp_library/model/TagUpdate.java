@@ -9,14 +9,14 @@ public class TagUpdate {
     private String album;
     private String artist;
     private String albumArtist;
-    String genre;
-    String year;
-    String track;
-    String trackTotal;
-    String disc;
-    String discTotal;
-    String lyrics;
-    String comment;
+    private String genre;
+    private String year;
+    private String track;
+    private String trackTotal;
+    private String disc;
+    private String discTotal;
+    private String lyrics;
+    private String comment;
 
     boolean titleHasChanged;
     boolean albumHasChanged;
@@ -301,5 +301,69 @@ public class TagUpdate {
 
     public String getAlbumArtist() {
         return albumArtist;
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
+    public String getTrack() {
+        return track;
+    }
+
+    public void setTrack(String track) {
+        this.track = track;
+    }
+
+    public String getTrackTotal() {
+        return trackTotal;
+    }
+
+    public void setTrackTotal(String trackTotal) {
+        this.trackTotal = trackTotal;
+    }
+
+    public String getDisc() {
+        return disc;
+    }
+
+    public void setDisc(String disc) {
+        this.disc = disc;
+    }
+
+    public String getDiscTotal() {
+        return discTotal;
+    }
+
+    public void setDiscTotal(String discTotal) {
+        this.discTotal = discTotal;
+    }
+
+    public String getLyrics() {
+        return lyrics;
+    }
+
+    public void setLyrics(String lyrics) {
+        this.lyrics = lyrics;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }

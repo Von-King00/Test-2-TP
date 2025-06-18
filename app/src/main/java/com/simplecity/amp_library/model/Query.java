@@ -5,11 +5,11 @@ import java.util.Arrays;
 
 public class Query {
 
-    public Uri uri;
-    public String[] projection;
-    public String selection;
-    public String[] args;
-    public String sort;
+    private Uri uri;
+    private String[] projection;
+    private String selection;
+    private String[] args;
+    private String sort;
 
     Query(Builder builder) {
         uri = builder.uri;
@@ -58,6 +58,12 @@ public class Query {
             return new Query(this);
         }
     }
+
+    public Uri getUri() { return uri; }
+    public String[] getProjection() { return projection; }
+    public String getSelection() { return selection; }
+    public String[] getArgs() { return args; }
+    public String getSort() { return sort; }
 
     @Override
     public String toString() {

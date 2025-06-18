@@ -10,11 +10,11 @@ import android.graphics.drawable.Drawable;
 
 public class LetterDrawable extends Drawable {
 
-    String mDisplayName;
-    Paint mPaint;
-    String mKeyName;
-    char[] mFirstChar;
-    TypedArray mColors;
+    private String mDisplayName;
+    private Paint mPaint;
+    private String mKeyName;
+    private char[] mFirstChar;
+    private TypedArray mColors;
 
     public LetterDrawable(String displayName, TypedArray colors, Paint paint) {
 
@@ -70,4 +70,15 @@ public class LetterDrawable extends Drawable {
         final int color = Math.abs(key.hashCode()) % mColors.length();
         return mColors.getColor(color, Color.BLACK);
     }
+
+    public String getDisplayName() { return mDisplayName; }
+    public void setDisplayName(String displayName) { this.mDisplayName = displayName; }
+    public Paint getPaint() { return mPaint; }
+    public void setPaint(Paint paint) { this.mPaint = paint; }
+    public String getKeyName() { return mKeyName; }
+    public void setKeyName(String keyName) { this.mKeyName = keyName; }
+    public char[] getFirstChar() { return mFirstChar; }
+    public void setFirstChar(char[] firstChar) { this.mFirstChar = firstChar; }
+    public TypedArray getColors() { return mColors; }
+    public void setColors(TypedArray colors) { this.mColors = colors; }
 }

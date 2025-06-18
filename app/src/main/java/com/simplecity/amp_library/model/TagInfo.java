@@ -23,15 +23,17 @@ public class TagInfo implements Serializable {
     private String artistName;
     private String albumArtistName;
     private String albumName;
-    public String trackName;
-    public int trackNumber;
-    public int trackTotal;
-    public int discNumber;
-    public int discTotal;
-    public String bitrate;
-    public String format;
-    public int sampleRate;
-    public String genre;
+    private String trackName;
+    private int trackNumber;
+    private int trackTotal;
+    private int discNumber;
+    private int discTotal;
+    private String bitrate;
+    private String format;
+    private int sampleRate;
+    private String genre;
+
+    public static final String UNKNOWN = "Unknown";
 
     public TagInfo(String filePath) {
         if (filePath != null) {
@@ -70,8 +72,9 @@ public class TagInfo implements Serializable {
                 }
             }
         } catch (UnsupportedOperationException ignored) {
+            // Bloc vide intentionnel : certains fichiers peuvent ne pas supporter cette opération.
         }
-        return "Unknown";
+        return UNKNOWN;
     }
 
     public static String getBitrate(AudioFile audioFile) {
@@ -81,8 +84,9 @@ public class TagInfo implements Serializable {
                 return audioHeader.getBitRate();
             }
         } catch (UnsupportedOperationException ignored) {
+            // Bloc vide intentionnel : certains fichiers peuvent ne pas supporter cette opération.
         }
-        return "Unknown";
+        return UNKNOWN;
     }
 
     public static String getFormat(AudioFile audioFile) {
@@ -92,8 +96,9 @@ public class TagInfo implements Serializable {
                 return audioHeader.getFormat();
             }
         } catch (UnsupportedOperationException ignored) {
+            // Bloc vide intentionnel : certains fichiers peuvent ne pas supporter cette opération.
         }
-        return "Unknown";
+        return UNKNOWN;
     }
 
     public static int getSampleRate(AudioFile audioFile) {
@@ -103,6 +108,7 @@ public class TagInfo implements Serializable {
                 return audioHeader.getSampleRateAsNumber();
             }
         } catch (UnsupportedOperationException ignored) {
+            // Bloc vide intentionnel : certains fichiers peuvent ne pas supporter cette opération.
         }
         return -1;
     }
@@ -117,5 +123,77 @@ public class TagInfo implements Serializable {
 
     public String getAlbumName() {
         return albumName;
+    }
+
+    public String getTrackName() {
+        return trackName;
+    }
+
+    public void setTrackName(String trackName) {
+        this.trackName = trackName;
+    }
+
+    public int getTrackNumber() {
+        return trackNumber;
+    }
+
+    public void setTrackNumber(int trackNumber) {
+        this.trackNumber = trackNumber;
+    }
+
+    public int getTrackTotal() {
+        return trackTotal;
+    }
+
+    public void setTrackTotal(int trackTotal) {
+        this.trackTotal = trackTotal;
+    }
+
+    public int getDiscNumber() {
+        return discNumber;
+    }
+
+    public void setDiscNumber(int discNumber) {
+        this.discNumber = discNumber;
+    }
+
+    public int getDiscTotal() {
+        return discTotal;
+    }
+
+    public void setDiscTotal(int discTotal) {
+        this.discTotal = discTotal;
+    }
+
+    public String getBitrate() {
+        return bitrate;
+    }
+
+    public void setBitrate(String bitrate) {
+        this.bitrate = bitrate;
+    }
+
+    public String getFormat() {
+        return format;
+    }
+
+    public void setFormat(String format) {
+        this.format = format;
+    }
+
+    public int getSampleRate() {
+        return sampleRate;
+    }
+
+    public void setSampleRate(int sampleRate) {
+        this.sampleRate = sampleRate;
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
     }
 }

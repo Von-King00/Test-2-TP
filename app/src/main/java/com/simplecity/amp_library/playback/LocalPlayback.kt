@@ -96,6 +96,7 @@ abstract class LocalPlayback(context: Context) : Playback {
 
     @CallSuper
     override fun pause(fade: Boolean) {
+        playOnFocusGain = false
         unregisterAudioNoisyReceiver()
     }
 

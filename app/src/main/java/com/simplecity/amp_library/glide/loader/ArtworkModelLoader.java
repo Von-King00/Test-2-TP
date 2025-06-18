@@ -19,10 +19,10 @@ public class ArtworkModelLoader implements ModelLoader<ArtworkProvider, InputStr
 
     private SettingsManager settingsManager;
 
-    public ArtworkModelLoader(Context context, boolean allowOfflineDownload) {
-        this.applicationContext = context.getApplicationContext();
-        this.allowOfflineDownload = allowOfflineDownload;
-        this.settingsManager = new SettingsManager(PreferenceManager.getDefaultSharedPreferences(context));
+    public ArtworkModelLoader(ArtworkModelLoaderParams params) {
+        this.applicationContext = params.context.getApplicationContext();
+        this.allowOfflineDownload = params.allowOfflineDownload;
+        this.settingsManager = new SettingsManager(PreferenceManager.getDefaultSharedPreferences(params.context));
     }
 
     private static final String TAG = "ArtworkModelLoader";
@@ -39,12 +39,22 @@ public class ArtworkModelLoader implements ModelLoader<ArtworkProvider, InputStr
 
         @Override
         public ModelLoader<ArtworkProvider, InputStream> build(Context context, GenericLoaderFactory factories) {
-            return new ArtworkModelLoader(context, false);
+            return new ArtworkModelLoader(new ArtworkModelLoaderParams(context, false));
         }
 
         @Override
         public void teardown() {
             // Do nothing.
+        }
+    }
+
+    public static class ArtworkModelLoaderParams {
+        public Context context;
+        public boolean allowOfflineDownload;
+
+        public ArtworkModelLoaderParams(Context context, boolean allowOfflineDownload) {
+            this.context = context;
+            this.allowOfflineDownload = allowOfflineDownload;
         }
     }
 }

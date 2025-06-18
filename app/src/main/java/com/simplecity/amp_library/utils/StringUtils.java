@@ -22,6 +22,8 @@ public class StringUtils {
 
     private static Pattern pattern = Pattern.compile("^(?i)\\s*(?:the |an |a )|(?:, the|, an|, a)\\s*$|[\\[\\]()!?.,']");
 
+    public static final String MIME_TYPE_TEXT_HTML = "text/html";
+
     private StringUtils() {
 
     }

@@ -1,4 +1,3 @@
-
 package com.simplecity.amp_library.data
 
 import android.content.Context

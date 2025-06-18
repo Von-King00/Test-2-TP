@@ -1,14 +1,16 @@
 package com.simplecity.amp_library.playback.constants;
 
-public interface InternalIntents {
-    String INTERNAL_INTENT_PREFIX = "com.simplecity.shuttle";
-    String PLAY_STATE_CHANGED = INTERNAL_INTENT_PREFIX + ".playstatechanged";
-    String POSITION_CHANGED = INTERNAL_INTENT_PREFIX + ".positionchanged";
-    String TRACK_ENDING = INTERNAL_INTENT_PREFIX + ".trackending";
-    String META_CHANGED = INTERNAL_INTENT_PREFIX + ".metachanged";
-    String QUEUE_CHANGED = INTERNAL_INTENT_PREFIX + ".queuechanged";
-    String SHUFFLE_CHANGED = INTERNAL_INTENT_PREFIX + ".shufflechanged";
-    String REPEAT_CHANGED = INTERNAL_INTENT_PREFIX + ".repeatchanged";
-    String FAVORITE_CHANGED = INTERNAL_INTENT_PREFIX + ".favoritechanged";
-    String SERVICE_CONNECTED = INTERNAL_INTENT_PREFIX + ".serviceconnected";
+public final class InternalIntentsConstants {
+    private InternalIntentsConstants() {}
+
+    public static final String INTERNAL_INTENT_PREFIX = "com.simplecity.shuttle";
+    public static final String PLAY_STATE_CHANGED = INTERNAL_INTENT_PREFIX + ".playstatechanged";
+    public static final String POSITION_CHANGED = INTERNAL_INTENT_PREFIX + ".positionchanged";
+    public static final String TRACK_ENDING = INTERNAL_INTENT_PREFIX + ".trackending";
+    public static final String META_CHANGED = INTERNAL_INTENT_PREFIX + ".metachanged";
+    public static final String QUEUE_CHANGED = INTERNAL_INTENT_PREFIX + ".queuechanged";
+    public static final String SHUFFLE_CHANGED = INTERNAL_INTENT_PREFIX + ".shufflechanged";
+    public static final String REPEAT_CHANGED = INTERNAL_INTENT_PREFIX + ".repeatchanged";
+    public static final String FAVORITE_CHANGED = INTERNAL_INTENT_PREFIX + ".favoritechanged";
+    public static final String SERVICE_CONNECTED = INTERNAL_INTENT_PREFIX + ".serviceconnected";
 }
