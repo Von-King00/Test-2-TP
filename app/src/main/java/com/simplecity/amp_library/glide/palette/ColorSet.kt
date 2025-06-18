@@ -7,7 +7,7 @@ import android.support.annotation.WorkerThread
 import com.simplecity.amp_library.utils.color.BitmapPaletteProcessor
 import com.simplecity.amp_library.utils.color.ColorHelper
 
-class ColorSet(
+class ColorSet private constructor(
     var primaryColor: Int,
     var accentColor: Int,
     var primaryTextColorTinted: Int,
@@ -79,6 +79,23 @@ class ColorSet(
         result = 31 * result + primaryTextColor
         result = 31 * result + secondaryTextColor
         return result
+    }
+
+    class Builder {
+        private var primaryColor: Int = Color.TRANSPARENT
+        private var accentColor: Int = Color.TRANSPARENT
+        private var primaryTextColorTinted: Int = Color.TRANSPARENT
+        private var secondaryTextColorTinted: Int = Color.TRANSPARENT
+        private var primaryTextColor: Int = Color.TRANSPARENT
+        private var secondaryTextColor: Int = Color.TRANSPARENT
+
+        fun primaryColor(value: Int) = apply { this.primaryColor = value }
+        fun accentColor(value: Int) = apply { this.accentColor = value }
+        fun primaryTextColorTinted(value: Int) = apply { this.primaryTextColorTinted = value }
+        fun secondaryTextColorTinted(value: Int) = apply { this.secondaryTextColorTinted = value }
+        fun primaryTextColor(value: Int) = apply { this.primaryTextColor = value }
+        fun secondaryTextColor(value: Int) = apply { this.secondaryTextColor = value }
+        fun build() = ColorSet(primaryColor, accentColor, primaryTextColorTinted, secondaryTextColorTinted, primaryTextColor, secondaryTextColor)
     }
 
 }
