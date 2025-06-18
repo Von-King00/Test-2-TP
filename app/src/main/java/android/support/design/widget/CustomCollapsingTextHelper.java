@@ -118,6 +118,29 @@ public final class CustomCollapsingTextHelper {
     private float mExpandedSubY;
     private float mCurrentSubY;
 
+    private static class TextAppearanceParams {
+        int resId;
+        ColorStateList textColor;
+        float textSize;
+        int shadowColor;
+        float shadowDx;
+        float shadowDy;
+        float shadowRadius;
+        Typeface typeface;
+        boolean isCollapsed;
+        TextAppearanceParams(int resId, ColorStateList textColor, float textSize, int shadowColor, float shadowDx, float shadowDy, float shadowRadius, Typeface typeface, boolean isCollapsed) {
+            this.resId = resId;
+            this.textColor = textColor;
+            this.textSize = textSize;
+            this.shadowColor = shadowColor;
+            this.shadowDx = shadowDx;
+            this.shadowDy = shadowDy;
+            this.shadowRadius = shadowRadius;
+            this.typeface = typeface;
+            this.isCollapsed = isCollapsed;
+        }
+    }
+
     public CustomCollapsingTextHelper(View view) {
         mView = view;
         mTitlePaint = new TextPaint(Paint.ANTI_ALIAS_FLAG | Paint.SUBPIXEL_TEXT_FLAG);
@@ -216,63 +239,55 @@ public final class CustomCollapsingTextHelper {
     }
 
     public void setCollapsedTextAppearance(int resId) {
-        loadTextAppearance(resId, mCollapsedTitleColor, mCollapsedTextSize, mCollapsedShadowColor, mCollapsedShadowDx, mCollapsedShadowDy, mCollapsedShadowRadius, mCollapsedTypeface, true);
+        loadTextAppearance(new TextAppearanceParams(resId, mCollapsedTitleColor, mCollapsedTextSize, mCollapsedShadowColor, mCollapsedShadowDx, mCollapsedShadowDy, mCollapsedShadowRadius, mCollapsedTypeface, true));
     }
 
     public void setExpandedTextAppearance(int resId) {
-        loadTextAppearance(resId, mExpandedTitleColor, mExpandedTextSize, mExpandedShadowColor, mExpandedShadowDx, mExpandedShadowDy, mExpandedShadowRadius, mExpandedTypeface, false);
+        loadTextAppearance(new TextAppearanceParams(resId, mExpandedTitleColor, mExpandedTextSize, mExpandedShadowColor, mExpandedShadowDx, mExpandedShadowDy, mExpandedShadowRadius, mExpandedTypeface, false));
     }
 
-    private void loadTextAppearance(int resId,
-                                    ColorStateList textColor,
-                                    float textSize,
-                                    int shadowColor,
-                                    float shadowDx,
-                                    float shadowDy,
-                                    float shadowRadius,
-                                    Typeface typeface,
-                                    boolean isCollapsed) {
-        TintTypedArray a = TintTypedArray.obtainStyledAttributes(mView.getContext(), resId,
+    private void loadTextAppearance(TextAppearanceParams params) {
+        TintTypedArray a = TintTypedArray.obtainStyledAttributes(mView.getContext(), params.resId,
                 android.support.v7.appcompat.R.styleable.TextAppearance);
         if (a.hasValue(android.support.v7.appcompat.R.styleable.TextAppearance_android_textColor)) {
-            textColor = a.getColorStateList(
+            params.textColor = a.getColorStateList(
                     android.support.v7.appcompat.R.styleable.TextAppearance_android_textColor);
         }
         if (a.hasValue(android.support.v7.appcompat.R.styleable.TextAppearance_android_textSize)) {
-            textSize = a.getDimensionPixelSize(
+            params.textSize = a.getDimensionPixelSize(
                     android.support.v7.appcompat.R.styleable.TextAppearance_android_textSize,
-                    (int) textSize);
+                    (int) params.textSize);
         }
-        shadowColor = a.getInt(
+        params.shadowColor = a.getInt(
                 android.support.v7.appcompat.R.styleable.TextAppearance_android_shadowColor, 0);
-        shadowDx = a.getFloat(
+        params.shadowDx = a.getFloat(
                 android.support.v7.appcompat.R.styleable.TextAppearance_android_shadowDx, 0);
-        shadowDy = a.getFloat(
+        params.shadowDy = a.getFloat(
                 android.support.v7.appcompat.R.styleable.TextAppearance_android_shadowDy, 0);
-        shadowRadius = a.getFloat(
+        params.shadowRadius = a.getFloat(
                 android.support.v7.appcompat.R.styleable.TextAppearance_android_shadowRadius, 0);
         a.recycle();
 
         if (Build.VERSION.SDK_INT >= 16) {
-            typeface = readFontFamilyTypeface(resId);
+            params.typeface = readFontFamilyTypeface(params.resId);
         }
 
-        if (isCollapsed) {
-            mCollapsedTitleColor = textColor;
-            mCollapsedTextSize = textSize;
-            mCollapsedShadowColor = shadowColor;
-            mCollapsedShadowDx = shadowDx;
-            mCollapsedShadowDy = shadowDy;
-            mCollapsedShadowRadius = shadowRadius;
-            mCollapsedTypeface = typeface;
+        if (params.isCollapsed) {
+            mCollapsedTitleColor = params.textColor;
+            mCollapsedTextSize = params.textSize;
+            mCollapsedShadowColor = params.shadowColor;
+            mCollapsedShadowDx = params.shadowDx;
+            mCollapsedShadowDy = params.shadowDy;
+            mCollapsedShadowRadius = params.shadowRadius;
+            mCollapsedTypeface = params.typeface;
         } else {
-            mExpandedTitleColor = textColor;
-            mExpandedTextSize = textSize;
-            mExpandedShadowColor = shadowColor;
-            mExpandedShadowDx = shadowDx;
-            mExpandedShadowDy = shadowDy;
-            mExpandedShadowRadius = shadowRadius;
-            mExpandedTypeface = typeface;
+            mExpandedTitleColor = params.textColor;
+            mExpandedTextSize = params.textSize;
+            mExpandedShadowColor = params.shadowColor;
+            mExpandedShadowDx = params.shadowDx;
+            mExpandedShadowDy = params.shadowDy;
+            mExpandedShadowRadius = params.shadowRadius;
+            mExpandedTypeface = params.typeface;
         }
         recalculate();
     }
